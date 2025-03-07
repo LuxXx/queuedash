@@ -1,6 +1,15 @@
 import * as trpcNext from "@trpc/server/adapters/next";
 import { appRouter } from "@queuedash/api";
-import Bull from "bull";
+import { Queue } from "bullmq";
+import IORedis from "ioredis";
+
+export const connection = new IORedis(process.env.REDIS_URL!, {
+  maxRetriesPerRequest: null,
+});
+
+export const queue = new Queue("analyzer", {
+  connection,
+});
 
 export default trpcNext.createNextApiHandler({
   router: appRouter,
@@ -16,9 +25,9 @@ export default trpcNext.createNextApiHandler({
   createContext: () => ({
     queues: [
       {
-        queue: new Bull("report-queue"),
-        displayName: "Reports",
-        type: "bull" as const,
+        queue,
+        displayName: "Analyzer",
+        type: "bullmq" as const,
       },
     ],
   }),

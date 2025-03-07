@@ -11,6 +11,8 @@
     "@queuedash/ui": "^2.0.5",
     "@trpc/server": "^10.38.5",
     "bull": "^4.11.3",
+    "bullmq": "^5.41.7",
+    "ioredis": "^5.6.0",
     "next": "^13.5.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
