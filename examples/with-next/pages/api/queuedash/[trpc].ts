@@ -7,7 +7,11 @@ export const connection = new IORedis(process.env.REDIS_URL!, {
   maxRetriesPerRequest: null,
 });
 
-export const queue = new Queue("analyzer", {
+export const analyzeFileQueue = new Queue("analyzeFile", {
+  connection,
+});
+
+export const analyzeProjectQueue = new Queue("analyzeProject", {
   connection,
 });
 
@@ -25,8 +29,13 @@ export default trpcNext.createNextApiHandler({
   createContext: () => ({
     queues: [
       {
-        queue,
-        displayName: "Analyzer",
+        queue: analyzeFileQueue,
+        displayName: "Analyze File",
+        type: "bullmq" as const,
+      },
+      {
+        queue: analyzeProjectQueue,
+        displayName: "Analyze Project",
         type: "bullmq" as const,
       },
     ],
