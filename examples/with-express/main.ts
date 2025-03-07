@@ -1,8 +1,18 @@
 import express from "express";
-import Bull from "bull";
+import { Queue } from "bullmq";
+import IORedis from "ioredis";
+
 import { createQueueDashExpressMiddleware } from "@queuedash/api";
 
 const app = express();
+
+export const connection = new IORedis(process.env.REDIS_URL!, {
+  maxRetriesPerRequest: null,
+});
+
+export const queue = new Queue("analyzer", {
+  connection,
+});
 
 app.use(
   "/queuedash",
@@ -10,9 +20,9 @@ app.use(
     ctx: {
       queues: [
         {
-          queue: new Bull("report-queue"),
-          displayName: "Reports",
-          type: "bull" as const,
+          queue,
+          displayName: "Analyzer",
+          type: "bullmq" as const,
         },
       ],
     },
