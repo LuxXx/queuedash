@@ -1,10 +1,13 @@
 import { QueueDashApp } from "@queuedash/ui";
-import { GetServerSideProps, NextPage } from "next";
-import { useRouter } from "next/router";
+import { NextPage } from "next";
 const Page: NextPage = () => {
-  const router = useRouter();
-  const hostname = router.query.hostname as string;
-  const url = `https://${hostname}/api/queuedash`;
+  const hostname =
+    typeof window !== "undefined"
+      ? window.location.hostname
+      : process.env.NEXT_PUBLIC_VERCEL_URL || "localhost";
+
+  const protocol = hostname === "localhost" ? "http" : "https";
+  const url = `${protocol}://${hostname}/api/queuedash`;
 
   return <QueueDashApp apiUrl={url} basename="/queuedash" />;
 };
